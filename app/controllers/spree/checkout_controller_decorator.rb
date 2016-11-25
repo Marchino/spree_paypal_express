@@ -213,7 +213,7 @@ module Spree
         if params[:order][:coupon_code] and !params[:order][:coupon_code].blank? and @order.coupon_code.present?
 
           event_name = "spree.checkout.coupon_code_added"
-          if promo = Spree::Promotion.with_coupon_code(@order.coupon_code).where(:event_name => event_name).first
+          if promo = Spree::Promotion.("lower(code) = ?", @order.coupon_code.strip.downcase).where(:event_name => event_name).first
             fire_event(event_name, :coupon_code => @order.coupon_code)
           else
             flash[:error] = t(:promotion_not_found)
